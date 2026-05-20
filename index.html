@@ -1,0 +1,462 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GoldVault — Premium Investment Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Nunito:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g1:#FFD700; --g2:#C8960C; --g3:#A0730A; --g4:#7A5200;
+  --gshine:#FFF4A3; --gbright:#FFE566;
+  --bg:#080600; --bg2:#0F0C00; --bg3:#181200; --bg4:#221A00;
+  --card:#141000; --card2:#1C1600;
+  --txt:#F5E6B0; --txt2:#B89840; --txt3:#7A6420;
+  --green:#00D46A; --red:#FF4757;
+  --white:#FFFDF0;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{height:100%;}
+body{
+  background:var(--bg);font-family:'Nunito',sans-serif;color:var(--txt);
+  min-height:100vh;overflow-x:hidden;
+}
+@keyframes shimmer{0%{background-position:-400px 0}100%{background-position:400px 0}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes glow{0%,100%{box-shadow:0 0 24px rgba(255,215,0,.35)}50%{box-shadow:0 0 50px rgba(255,215,0,.75)}}
+@keyframes scroll-ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+#wrapper{max-width:430px;margin:0 auto;min-height:100vh;position:relative;background:var(--bg);box-shadow:0 0 80px rgba(0,0,0,.9);}
+#authScreen{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:30px 20px 40px;background:radial-gradient(ellipse at 50% -10%,#3a2800 0%,#080600 65%);overflow-y:auto;}
+.auth-logo-wrap{width:110px;height:110px;margin:0 auto 10px;background:linear-gradient(135deg,#3a2800,#7A5200,#FFD700,#7A5200,#3a2800);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:50px;box-shadow:0 0 60px rgba(255,215,0,.45),0 0 120px rgba(255,215,0,.18);animation:float 3.5s ease-in-out infinite,glow 2s ease-in-out infinite;}
+.auth-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:800;background:linear-gradient(135deg,var(--g3),var(--g1),var(--gshine),var(--g1),var(--g3));background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;letter-spacing:3px;margin-bottom:2px;animation:shimmer 3s linear infinite;}
+.auth-sub{font-size:10px;letter-spacing:4px;color:var(--txt3);text-align:center;text-transform:uppercase;margin-bottom:28px;}
+.auth-box{width:100%;max-width:390px;background:linear-gradient(180deg,#1C1600,#0F0C00);border:1px solid #3a2800;border-radius:22px;padding:26px 20px;box-shadow:0 24px 64px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,215,0,.12);}
+.auth-tabs{display:flex;background:#0A0800;border-radius:12px;padding:4px;margin-bottom:22px;gap:4px;}
+.atab{flex:1;padding:10px;background:transparent;border:none;color:var(--txt3);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;border-radius:9px;cursor:pointer;transition:.28s;}
+.atab.on{background:linear-gradient(135deg,var(--g4),var(--g2));color:#000;}
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:9px;letter-spacing:2.5px;color:var(--txt3);text-transform:uppercase;margin-bottom:6px;}
+.fg input,.fg select{width:100%;padding:12px 14px;background:#0A0800;border:1px solid #2a1e00;border-radius:10px;color:var(--txt);font-family:'Nunito',sans-serif;font-size:14px;outline:none;transition:border-color .28s;-webkit-appearance:none;}
+.fg input:focus,.fg select:focus{border-color:var(--g2);}
+.fg input::placeholder{color:#3a2e10;}
+.fg select option{background:#0A0800;}
+.btn-G{width:100%;padding:14px;border:none;border-radius:12px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;letter-spacing:1px;background:linear-gradient(135deg,var(--g4),var(--g2),var(--g1),var(--g2),var(--g4));background-size:200% auto;color:#000;box-shadow:0 4px 28px rgba(255,215,0,.32);transition:all .28s;animation:shimmer 3s linear infinite;}
+.btn-G:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(255,215,0,.55);}
+.auth-err{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.3);border-radius:8px;padding:9px 12px;color:#FF8A94;font-size:12px;margin-bottom:12px;display:none;}
+#app{display:none;flex-direction:column;min-height:100vh;}
+.hdr{background:linear-gradient(180deg,#1C1600,#0F0C00);border-bottom:1px solid #2a1e00;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 2px 24px rgba(0,0,0,.7);}
+.hdr-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;background:linear-gradient(135deg,var(--g2),var(--g1),var(--gshine));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px;}
+.hdr-ava{width:36px;height:36px;border-radius:50%;cursor:pointer;background:linear-gradient(135deg,var(--g4),var(--g1));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#000;border:2px solid rgba(255,215,0,.4);}
+.scroll{flex:1;overflow-y:auto;padding-bottom:80px;}
+.scroll::-webkit-scrollbar{width:0;}
+.hero{margin:14px 14px 0;background:linear-gradient(135deg,#1C1600,#2a1e00,#1C1600);border:1px solid #3a2800;border-radius:20px;padding:22px 20px;position:relative;overflow:hidden;box-shadow:0 10px 36px rgba(0,0,0,.75),inset 0 1px 0 rgba(255,215,0,.1);}
+.hero::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,215,0,.15) 0%,transparent 70%);pointer-events:none;}
+.hero-coin{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:58px;opacity:.28;animation:float 4s ease-in-out infinite;}
+.hero-lbl{font-size:9px;letter-spacing:3px;color:var(--txt3);text-transform:uppercase;margin-bottom:4px;}
+.hero-bal{font-family:'Playfair Display',serif;font-size:36px;font-weight:800;background:linear-gradient(135deg,var(--g2),var(--g1),var(--gshine));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;}
+.hero-sub{font-size:11px;color:var(--txt3);margin-top:2px;}
+.hero-row{display:flex;gap:10px;margin-top:14px;}
+.hero-chip{display:inline-flex;align-items:center;gap:7px;background:rgba(0,0,0,.4);border:1px solid #2a1e00;border-radius:8px;padding:7px 12px;}
+.hero-chip-lbl{font-size:9px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;}
+.hero-chip-val{font-size:12px;color:var(--g1);font-weight:700;letter-spacing:2px;}
+.ticker{background:#0A0800;border-top:1px solid #1a1400;border-bottom:1px solid #1a1400;padding:7px 0;margin-top:12px;overflow:hidden;white-space:nowrap;}
+.ticker-inner{display:inline-flex;gap:24px;animation:scroll-ticker 18s linear infinite;}
+.tick-item{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--txt3);}
+.tick-val{color:var(--green);font-weight:700;}
+.qa-row{display:flex;gap:10px;margin:14px 14px 0;}
+.qa{flex:1;background:var(--card);border:1px solid #2a1e00;border-radius:14px;padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:.28s;}
+.qa:hover,.qa:active{border-color:var(--g2);background:var(--card2);}
+.qa-i{font-size:22px;}
+.qa-t{font-size:9px;letter-spacing:1.5px;color:var(--txt3);text-transform:uppercase;font-weight:700;}
+.sec-hd{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gbright);margin:18px 14px 10px;display:flex;align-items:center;gap:10px;}
+.sec-hd::after{content:'';flex:1;height:1px;background:linear-gradient(to right,#3a2800,transparent);}
+.plans{display:flex;flex-direction:column;gap:10px;margin:0 14px;}
+.plan-card{background:linear-gradient(160deg,#141000,#1C1600);border:1px solid #2a1e00;border-radius:18px;overflow:hidden;cursor:pointer;transition:.28s;position:relative;}
+.plan-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,215,0,.04),transparent);pointer-events:none;}
+.plan-card:hover{border-color:var(--g2);transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,.7);}
+.plan-top{padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #1a1400;}
+.plan-icon{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.plan-info{flex:1;}
+.plan-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--g1);}
+.plan-desc{font-size:10px;color:var(--txt3);margin-top:2px;}
+.plan-tag{padding:4px 10px;border-radius:20px;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;flex-shrink:0;}
+.tag-hot{background:rgba(255,71,87,.15);color:var(--red);border:1px solid rgba(255,71,87,.3);}
+.tag-pop{background:rgba(0,212,106,.15);color:var(--green);border:1px solid rgba(0,212,106,.3);}
+.tag-vip{background:rgba(255,215,0,.12);color:var(--g1);border:1px solid rgba(255,215,0,.3);}
+.tag-new{background:rgba(100,150,255,.15);color:#88aaff;border:1px solid rgba(100,150,255,.3);}
+.plan-stats{display:grid;grid-template-columns:repeat(4,1fr);padding:12px 14px 14px;gap:6px;}
+.ps-col{text-align:center;padding:8px 4px;background:rgba(0,0,0,.3);border-radius:9px;}
+.ps-lbl{font-size:8px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;margin-bottom:4px;}
+.ps-val{font-size:12px;font-weight:800;color:var(--g1);}
+.ps-val.green{color:var(--green);}
+.ps-val.bright{color:var(--gbright);font-size:13px;}
+.plan-btn-wrap{padding:0 14px 14px;}
+.plan-btn{width:100%;padding:11px;background:linear-gradient(135deg,var(--g4),var(--g2));border:none;border-radius:10px;color:#000;font-weight:800;font-size:12px;letter-spacing:1px;cursor:pointer;font-family:'Nunito',sans-serif;transition:.28s;text-transform:uppercase;}
+.plan-btn:hover{background:linear-gradient(135deg,var(--g3),var(--g1));}
+.stats-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 14px;}
+.stat-box{background:var(--card);border:1px solid #2a1e00;border-radius:14px;padding:14px;text-align:center;}
+.stat-box-i{font-size:22px;margin-bottom:6px;}
+.stat-box-v{font-size:18px;font-weight:800;color:var(--g1);font-family:'Playfair Display',serif;}
+.stat-box-l{font-size:9px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:linear-gradient(180deg,#0F0C00,#080600);border-top:1px solid #2a1e00;display:flex;padding:8px 0 14px;z-index:100;}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:6px 4px;transition:.2s;}
+.bni-i{font-size:20px;line-height:1;}
+.bni-t{font-size:8px;letter-spacing:1px;color:var(--txt3);text-transform:uppercase;font-weight:700;margin-top:1px;}
+.bni.on .bni-t{color:var(--g1);}
+.bni.on .bni-i{filter:drop-shadow(0 0 6px rgba(255,215,0,.7));}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:300;align-items:flex-end;justify-content:center;}
+.overlay.open{display:flex;}
+.sheet{background:linear-gradient(180deg,#1C1600,#0F0C00);border:1px solid #2a1e00;border-top:2px solid #3a2800;border-radius:22px 22px 0 0;width:100%;max-width:430px;max-height:92vh;overflow-y:auto;padding:10px 20px 40px;animation:fadeUp .28s ease;}
+.sheet::-webkit-scrollbar{width:0;}
+.drag-bar{width:44px;height:4px;background:#2a1e00;border-radius:2px;margin:0 auto 18px;}
+.sheet-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--gbright);text-align:center;margin-bottom:18px;}
+.method-card{background:var(--card);border:2px solid #2a1e00;border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:.28s;position:relative;overflow:hidden;}
+.method-card.sel{border-color:var(--g1);}
+.method-card.sel::before{content:'';position:absolute;inset:0;background:rgba(255,215,0,.05);pointer-events:none;}
+.mc-row{display:flex;align-items:center;gap:12px;}
+.mc-logo{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;background:rgba(255,215,0,.07);border:1px solid #2a1e00;flex-shrink:0;}
+.mc-info h4{font-size:15px;color:var(--g1);font-weight:700;margin-bottom:3px;}
+.mc-info p{font-size:11px;color:var(--txt3);}
+.mc-check{margin-left:auto;width:22px;height:22px;border-radius:50%;background:rgba(255,215,0,.12);border:1px solid #3a2800;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.sel .mc-check{background:var(--g1);border-color:var(--g1);color:#000;}
+.acc-detail{margin-top:10px;padding:12px;background:#070500;border:1px dashed #3a2800;border-radius:10px;}
+.acc-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.acc-row:last-child{margin-bottom:0;}
+.acc-lbl{font-size:10px;color:var(--txt3);letter-spacing:1px;}
+.acc-val{font-size:14px;color:var(--gbright);font-weight:700;letter-spacing:2px;}
+.copy-btn{padding:4px 12px;background:linear-gradient(135deg,var(--g4),var(--g2));border:none;border-radius:6px;color:#000;font-size:10px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;flex-shrink:0;}
+.amount-box{background:linear-gradient(135deg,rgba(255,215,0,.14),rgba(255,215,0,.05));border:1px solid rgba(255,215,0,.35);border-radius:14px;text-align:center;padding:18px;margin:14px 0;}
+.ab-lbl{font-size:9px;letter-spacing:3px;color:var(--txt3);text-transform:uppercase;margin-bottom:6px;}
+.ab-num{font-family:'Playfair Display',serif;font-size:46px;font-weight:800;background:linear-gradient(135deg,var(--g2),var(--g1),var(--gshine));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.ab-sub{font-size:10px;color:var(--txt3);margin-top:4px;}
+.timer-box{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.25);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin:12px 0;}
+.timer-pulse{font-size:28px;animation:pulse 1s ease-in-out infinite;}
+.timer-info p{font-size:11px;color:#FF8A94;margin-bottom:4px;}
+.timer-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--red);}
+.txid-wrap{margin:12px 0;}
+.txid-wrap label{display:block;font-size:9px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;margin-bottom:7px;}
+.txid-wrap input{width:100%;padding:13px 14px;background:#0A0800;border:1px solid #2a1e00;border-radius:10px;color:var(--gbright);font-size:14px;font-weight:700;font-family:'Nunito',sans-serif;letter-spacing:2px;outline:none;transition:.28s;}
+.txid-wrap input:focus{border-color:var(--g1);}
+.txid-wrap input::placeholder{color:#2a2010;letter-spacing:1px;}
+.btn-submit{width:100%;padding:14px;border:none;border-radius:12px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;letter-spacing:1px;background:linear-gradient(135deg,var(--g4),var(--g2),var(--g1));color:#000;box-shadow:0 4px 24px rgba(255,215,0,.3);transition:.28s;margin-top:6px;}
+.btn-submit:hover{transform:translateY(-2px);}
+.btn-submit:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-close{display:block;width:100%;margin-top:10px;padding:12px;background:transparent;border:1px solid #2a1e00;border-radius:10px;color:var(--txt3);font-family:'Nunito',sans-serif;font-size:13px;cursor:pointer;transition:.28s;}
+.btn-close:hover{border-color:#4a3200;color:var(--txt2);}
+.info-box{background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.15);border-radius:10px;padding:12px;margin:12px 0;font-size:12px;color:var(--txt3);line-height:1.7;}
+.info-box b{color:var(--g1);}
+.warn-box{background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.2);border-radius:10px;padding:12px;margin:12px 0;font-size:12px;color:#FF8A94;line-height:1.7;}
+.success-wrap{text-align:center;padding:16px 0 22px;}
+.success-wrap .big-i{font-size:68px;animation:float 2s ease-in-out infinite;}
+.success-wrap h3{font-family:'Playfair Display',serif;font-size:22px;color:var(--g1);margin:12px 0 6px;}
+.success-wrap p{font-size:13px;color:var(--txt3);line-height:1.6;}
+.wd-plan-sel{background:var(--card);border:1px solid #2a1e00;border-radius:10px;width:100%;padding:12px 14px;color:var(--txt);font-family:'Nunito',sans-serif;font-size:14px;outline:none;margin-bottom:12px;-webkit-appearance:none;cursor:pointer;}
+.pro-header{text-align:center;padding:10px 0 20px;}
+.pro-ava-big{width:72px;height:72px;border-radius:50%;margin:0 auto 10px;background:linear-gradient(135deg,var(--g4),var(--g1));display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:#000;border:3px solid rgba(255,215,0,.4);}
+.pro-name{font-family:'Playfair Display',serif;font-size:20px;color:var(--g1);}
+.pro-email{font-size:12px;color:var(--txt3);margin-top:3px;}
+.pro-stat{display:flex;justify-content:space-between;padding:12px 14px;background:var(--card);border-radius:10px;margin-bottom:8px;border:1px solid #1a1400;}
+.pro-stat span:first-child{color:var(--txt3);font-size:13px;}
+.pro-stat span:last-child{color:var(--gbright);font-size:13px;font-weight:700;}
+.btn-logout{width:100%;padding:13px;background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.3);border-radius:12px;color:var(--red);font-size:14px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;margin-top:14px;transition:.28s;}
+.btn-logout:hover{background:rgba(255,71,87,.22);}
+.inv-empty{text-align:center;padding:40px 20px;color:var(--txt3);font-size:14px;}
+.inv-card{background:var(--card);border:1px solid #2a1e00;border-radius:14px;padding:14px;margin-bottom:10px;}
+.ic-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.ic-name{font-size:15px;color:var(--g1);font-weight:700;}
+.ic-badge{padding:3px 10px;border-radius:20px;font-size:9px;font-weight:800;letter-spacing:1px;background:rgba(0,212,106,.15);color:var(--green);border:1px solid rgba(0,212,106,.3);}
+.ic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.ic-box{background:#0A0800;border-radius:8px;padding:9px;text-align:center;}
+.ic-bl{font-size:8px;color:var(--txt3);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.ic-bv{font-size:14px;font-weight:800;color:var(--gbright);}
+.prog-bar{height:4px;background:#1a1400;border-radius:2px;margin-top:12px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(to right,var(--g4),var(--g1));border-radius:2px;}
+.ref-box{background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(255,215,0,.03));border:2px dashed rgba(255,215,0,.3);border-radius:16px;text-align:center;padding:22px;margin:14px 0;}
+.ref-lbl{font-size:9px;letter-spacing:3px;color:var(--txt3);text-transform:uppercase;margin-bottom:8px;}
+.ref-code{font-family:'Playfair Display',serif;font-size:34px;font-weight:800;background:linear-gradient(135deg,var(--g2),var(--g1),var(--gshine));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:6px;}
+.ref-btns{display:flex;gap:8px;margin-top:14px;}
+.ref-btn{flex:1;padding:11px;background:var(--card);border:1px solid #2a1e00;border-radius:10px;color:var(--txt3);font-size:12px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;transition:.28s;}
+.ref-btn:hover{border-color:var(--g2);color:var(--g1);}
+.div{height:1px;background:#1a1400;margin:14px 0;}
+.page-sec{display:none;}
+.page-sec.active{display:block;}
+#toast{position:fixed;top:16px;left:50%;transform:translateX(-50%) translateY(-80px);background:linear-gradient(135deg,var(--g4),var(--g2));color:#000;padding:11px 24px;border-radius:30px;font-size:13px;font-weight:800;z-index:999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;pointer-events:none;box-shadow:0 6px 28px rgba(0,0,0,.7);}
+#toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div id="wrapper">
+
+<div id="authScreen">
+  <div class="auth-logo-wrap">🏅</div>
+  <div class="auth-title">GOLDVAULT</div>
+  <div class="auth-sub">Premium Investment Platform</div>
+  <div class="auth-box">
+    <div class="auth-tabs">
+      <button class="atab on" id="tabLogin" onclick="switchTab('login')">Login</button>
+      <button class="atab" id="tabReg" onclick="switchTab('reg')">Register</button>
+    </div>
+    <div id="loginForm">
+      <div id="loginErr" class="auth-err">❌ Email ya password ghalat hai</div>
+      <div class="fg"><label>Email Address</label><input type="email" id="lEmail" placeholder="aap@example.com"></div>
+      <div class="fg"><label>Password</label><input type="password" id="lPass" placeholder="••••••••"></div>
+      <button class="btn-G" onclick="doLogin()">🔐 Login Karein</button>
+    </div>
+    <div id="regForm" style="display:none">
+      <div id="regErr" class="auth-err"></div>
+      <div class="fg"><label>Pura Naam</label><input type="text" id="rName" placeholder="Your Name"></div>
+      <div class="fg"><label>Email Address</label><input type="email" id="rEmail" placeholder="aap@example.com"></div>
+      <div class="fg"><label>Phone Number</label><input type="tel" id="rPhone" placeholder="03XXXXXXXXX"></div>
+      <div class="fg"><label>Password (min 6 characters)</label><input type="password" id="rPass" placeholder="••••••••"></div>
+      <div class="fg"><label>Referral Code (Optional)</label><input type="text" id="rRef" placeholder="GV-XXXXX"></div>
+      <button class="btn-G" onclick="doRegister()">✨ Account Banayein</button>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="hdr">
+    <div class="hdr-logo">🏅 GOLDVAULT</div>
+    <div class="hdr-ava" id="hdrAva" onclick="openOverlay('mProfile')">A</div>
+  </div>
+  <div class="scroll">
+    <div id="pgHome" class="page-sec active">
+      <div class="hero">
+        <div class="hero-coin">🪙</div>
+        <div class="hero-lbl">Total Balance</div>
+        <div class="hero-bal" id="heroBalance">PKR 0.00</div>
+        <div class="hero-sub" id="heroEarnings">Total Kamai: PKR 0.00</div>
+        <div class="hero-row">
+          <div class="hero-chip"><div class="hero-chip-lbl">Account ID</div><div class="hero-chip-val" id="heroId">GV-001</div></div>
+          <div class="hero-chip"><div class="hero-chip-lbl">Status</div><div class="hero-chip-val" style="color:var(--green)">✓ Active</div></div>
+        </div>
+      </div>
+      <div class="ticker">
+        <div class="ticker-inner">
+          <span class="tick-item">🪙 Gold <span class="tick-val">PKR 290,450</span></span>
+          <span class="tick-item">📈 GoldVault Return <span class="tick-val">+26.4%</span></span>
+          <span class="tick-item">👥 Total Members <span class="tick-val">14,829</span></span>
+          <span class="tick-item">💰 Total Paid Out <span class="tick-val">PKR 2.4 Cr</span></span>
+          <span class="tick-item">⭐ Rating <span class="tick-val">4.9/5</span></span>
+          <span class="tick-item">🪙 Gold <span class="tick-val">PKR 290,450</span></span>
+          <span class="tick-item">📈 GoldVault Return <span class="tick-val">+26.4%</span></span>
+          <span class="tick-item">👥 Total Members <span class="tick-val">14,829</span></span>
+          <span class="tick-item">💰 Total Paid Out <span class="tick-val">PKR 2.4 Cr</span></span>
+          <span class="tick-item">⭐ Rating <span class="tick-val">4.9/5</span></span>
+        </div>
+      </div>
+      <div class="qa-row">
+        <div class="qa" onclick="openOverlay('mDeposit')"><div class="qa-i">💰</div><div class="qa-t">Deposit</div></div>
+        <div class="qa" onclick="openOverlay('mWithdraw')"><div class="qa-i">🏦</div><div class="qa-t">Withdraw</div></div>
+        <div class="qa" onclick="goPage('pgMyInv')"><div class="qa-i">📊</div><div class="qa-t">My Plans</div></div>
+        <div class="qa" onclick="openOverlay('mShare')"><div class="qa-i">🎁</div><div class="qa-t">Refer</div></div>
+      </div>
+      <div class="sec-hd">Overview</div>
+      <div class="stats-strip">
+        <div class="stat-box"><div class="stat-box-i">📥</div><div class="stat-box-v" id="statDeposit">0</div><div class="stat-box-l">Deposits</div></div>
+        <div class="stat-box"><div class="stat-box-i">📈</div><div class="stat-box-v" id="statPlans">0</div><div class="stat-box-l">Active Plans</div></div>
+        <div class="stat-box"><div class="stat-box-i">💸</div><div class="stat-box-v" id="statWithdraw">0</div><div class="stat-box-l">Withdrawals</div></div>
+      </div>
+      <div class="sec-hd">Investment Plans</div>
+      <div class="plans" id="plansContainer"></div>
+      <div style="height:20px;"></div>
+    </div>
+    <div id="pgMyInv" class="page-sec">
+      <div class="sec-hd" style="margin-top:14px">Mere Plans</div>
+      <div id="myInvContainer" style="padding:0 14px;"><div class="inv-empty">📋 Abhi koi active plan nahi<br><small>Koi plan khareedein aur kamai shuru karein</small></div></div>
+      <div style="height:20px;"></div>
+    </div>
+    <div id="pgHistory" class="page-sec">
+      <div class="sec-hd" style="margin-top:14px">Transaction History</div>
+      <div id="historyContainer" style="padding:0 14px;"><div class="inv-empty">📋 Koi transaction nahi</div></div>
+      <div style="height:20px;"></div>
+    </div>
+  </div>
+  <div class="bnav">
+    <div class="bni on" id="bni0" onclick="goPage('pgHome');setNav(0)"><div class="bni-i">🏠</div><div class="bni-t">Home</div></div>
+    <div class="bni" id="bni1" onclick="goPage('pgMyInv');setNav(1)"><div class="bni-i">📊</div><div class="bni-t">My Plans</div></div>
+    <div class="bni" id="bni2" onclick="openOverlay('mDeposit');setNav(2)"><div class="bni-i">💰</div><div class="bni-t">Deposit</div></div>
+    <div class="bni" id="bni3" onclick="goPage('pgHistory');setNav(3)"><div class="bni-i">📋</div><div class="bni-t">History</div></div>
+    <div class="bni" id="bni4" onclick="openOverlay('mProfile');setNav(4)"><div class="bni-i">👤</div><div class="bni-t">Profile</div></div>
+  </div>
+</div>
+
+<div class="overlay" id="mDeposit">
+  <div class="sheet">
+    <div class="drag-bar"></div>
+    <div class="sheet-title">💰 Deposit Karein</div>
+    <div id="depositStep1">
+      <div class="fg"><label>Plan Select Karein</label><select id="depositPlanSel" onchange="updateDepositAmount()"><option value="">-- Plan Chunein --</option></select></div>
+      <div class="amount-box" id="depositAmountBox" style="display:none">
+        <div class="ab-lbl">Deposit Amount</div>
+        <div class="ab-num" id="depositAmt">PKR 500</div>
+        <div class="ab-sub" id="depositReturn">Daily Return: PKR 132 | 365 Din</div>
+      </div>
+      <div style="margin-bottom:8px;font-size:10px;letter-spacing:2px;color:var(--txt3);text-transform:uppercase;">Payment Method</div>
+      <div class="method-card sel" id="mc1" onclick="selMethod(1)">
+        <div class="mc-row"><div class="mc-logo">📱</div><div class="mc-info"><h4>JazzCash</h4><p>Mobile Wallet - Fori Transfer</p></div><div class="mc-check">✓</div></div>
+        <div class="acc-detail" id="jcDetail">
+          <div class="acc-row"><span class="acc-lbl">Account Number</span><span class="acc-val">03187727215</span><button class="copy-btn" onclick="copyText('0300-1234567')">Copy</button></div>
+          <div class="acc-row"><span class="acc-lbl">Account Name</span><span class="acc-val" style="font-size:12px;">GoldVault Official</span></div>
+        </div>
+      </div>
+      <div class="method-card" id="mc2" onclick="selMethod(2)">
+        <div class="mc-"><div class="mc-logo">💚</div><div class="- Safe Transfer</p></div><div class="mc-check"></div></div>
+        <div class="acc-detail" id="epDetail" style="display:none">
+          <div class="acc-row"><span class="acc-lbl">Account Number</span><span class="acc-val"></span><button class="copy-btn" onclick="copyText('0333-9876543')">Copy</button></div>
+          <div class="acc-row"><span class="acc-lbl">Account Name</span><span class="acc-val" style="font-size:12px;">GoldVault Official</span></div>
+        </div>
+      </div>
+      <div class="method-card" id="mc3" onclick="selMethod(3)">
+        <div class="mc-row"><div class="mc-logo">🏦</div><div class="mc-info"><h4>Bank Transfer</h4><p>HBL / MCB / UBL Online</p></div><div class="mc-check"></div></div>
+        <div class="acc-detail" id="bankDetail" style="display:none">
+          <div class="acc-row"><span class="acc-lbl">Account Number</span><span class="acc-val" style="font-size:11px;">0123456789012345</span><button class="copy-btn" onclick="copyText('0123456789012345')">Copy</button></div>
+          <div class="acc-row"><span class="acc-lbl">Bank Name</span><span class="acc-val" style="font-size:12px;">HBL</span></div>
+          <div class="acc-row"><span class="acc-lbl">Account Title</span><span class="acc-val" style="font-size:12px;">GoldVault Pvt Ltd</span></div>
+          <div class="acc-row"><span class="acc-lbl">IBAN</span><span class="acc-val" style="font-size:10px;">PK36HABB0000123456789012</span><button class="copy-btn" onclick="copyText('PK36HABB0000123456789012')">Copy</button></div>
+        </div>
+      </div>
+      <div class="info-box">⚠️ <b>Zaroori:</b> Paise transfer karne ke baad neeche Transaction ID zaroor likhein.<br>⏰ Verification mein <b>1 ghanta</b> lagta hai.</div>
+      <button class="btn-G" onclick="proceedDeposit()" id="btnProceedDeposit" disabled>Aage Barein — Transaction ID Dein</button>
+      <button class="btn-close" onclick="closeOverlay('mDeposit')">Baad Mein</button>
+    </div>
+    <div id="depositStep2" style="display:none">
+      <div class="timer-box"><div class="timer-pulse">⏳</div><div class="timer-info"><p>Verification time remaining</p><div class="timer-val" id="timerDisplay">01:00:00</div></div></div>
+      <div class="amount-box"><div class="ab-lbl">Confirm Transfer Amount</div><div class="ab-num" id="confirmAmt">PKR 500</div><div class="ab-sub">Paise transfer ho chuke hain?</div></div>
+      <div class="txid-wrap"><label>Transaction ID / TxID</label><input type="text" id="txidInput" placeholder="JC123456789 ya Bank TxID"></div>
+      <div class="info-box" style="font-size:11px;">📌 Transaction ID woh number hota hai jo JazzCash / Bank transfer ke baad SMS ya receipt mein aata hai.</div>
+      <button class="btn-submit" onclick="submitDeposit()">✅ Deposit Submit Karein</button>
+      <button class="btn-close" onclick="closeOverlay('mDeposit');resetDepositForm()">Cancel</button>
+    </div>
+    <div id="depositStep3" style="display:none">
+      <div class="success-wrap"><div class="big-i">🎉</div><h3>Deposit Bhaij Diya!</h3><p>Aapki Transaction ID receive ho gayi hai.<br><b style="color:var(--g1);">1 ghante ke andar</b> aapka account activate ho jayega.</p></div>
+      <button class="btn-G" onclick="closeOverlay('mDeposit');resetDepositForm()">🏠 Home Par Wapis</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="mWithdraw">
+  <div class="sheet">
+    <div class="drag-bar"></div>
+    <div class="sheet-title">🏦 Withdraw Karein</div>
+    <div class="warn-box">⚠️ Minimum withdraw: <b style="color:var(--red);">PKR 500</b><br>Processing time: <b style="color:var(--red);">24-48 ghante</b></div>
+    <div class="fg"><label>Withdraw Amount (PKR)</label><input type="number" id="wdAmount" placeholder="500"></div>
+    <div class="fg"><label>Payment Method</label><select class="wd-plan-sel" id="wdMethod"><option value="jazzcash">JazzCash</option><option value="easypaisa">Easypaisa</option><option value="bank">Bank Transfer</option></select></div>
+    <div class="fg"><label>Account Number</label><input type="text" id="wdAccount" placeholder="03XXXXXXXXX"></div>
+    <div class="fg"><label>Account Name</label><input type="text" id="wdName" placeholder="Aapka Naam"></div>
+    <button class="btn-submit" onclick="submitWithdraw()">📤 Withdraw Request Dein</button>
+    <button class="btn-close" onclick="closeOverlay('mWithdraw')">Cancel</button>
+  </div>
+</div>
+
+<div class="overlay" id="mProfile">
+  <div class="sheet">
+    <div class="drag-bar"></div>
+    <div class="pro-header"><div class="pro-ava-big" id="proAvaBig">A</div><div class="pro-name" id="proName">User Name</div><div class="pro-email" id="proEmail">user@email.com</div></div>
+    <div class="div"></div>
+    <div class="pro-stat"><span>Account ID</span><span id="proId">GV-001</span></div>
+    <div class="pro-stat"><span>Phone</span><span id="proPhone">03XXXXXXXXX</span></div>
+    <div class="pro-stat"><span>Total Deposit</span><span id="proDeposit">PKR 0</span></div>
+    <div class="pro-stat"><span>Total Earned</span><span id="proEarned">PKR 0</span></div>
+    <div class="pro-stat"><span>Active Plans</span><span id="proPlans">0</span></div>
+    <div class="pro-stat"><span>Member Since</span><span id="proSince">-</span></div>
+    <div class="div"></div>
+    <button class="btn-close" onclick="openOverlay('mShare');closeOverlay('mProfile')">🎁 Referral Program</button>
+    <button class="btn-logout" onclick="doLogout()">🚪 Logout</button>
+  </div>
+</div>
+
+<div class="overlay" id="mShare">
+  <div class="sheet">
+    <div class="drag-bar"></div>
+    <div class="sheet-title">🎁 Dost Ko Invite Karein</div>
+    <div class="ref-box"><div class="ref-lbl">Aapka Referral Code</div><div class="ref-code" id="refCode">GV-00001</div></div>
+    <div class="info-box">✅ Har referral par <b>PKR 200 bonus</b><br>👥 Dost ko <b>PKR 100 welcome bonus</b></div>
+    <div class="ref-btns"><button class="ref-btn" onclick="copyRefCode()">📋 Code Copy</button><button class="ref-btn" onclick="shareWhatsApp()">💬 WhatsApp</button></div>
+    <div class="div"></div>
+    <div class="pro-stat"><span>Total Referred</span><span id="refCount">0 log</span></div>
+    <div class="pro-stat"><span>Referral Bonus</span><span id="refBonus">PKR 0</span></div>
+    <button class="btn-close" onclick="closeOverlay('mShare')">Close</button>
+  </div>
+</div>
+
+<div class="overlay" id="mPlanInvest">
+  <div class="sheet">
+    <div class="drag-bar"></div>
+    <div class="sheet-title" id="piTitle">Plan Details</div>
+    <div class="amount-box"><div class="ab-lbl">Investment Amount</div><div class="ab-num" id="piAmount">PKR 500</div><div class="ab-sub" id="piReturn">Daily: PKR 132 | 365 Din</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;">
+      <div class="ic-box" style="background:var(--card);border-radius:10px;padding:12px;"><div class="ic-bl">Daily Income</div><div class="ic-bv" id="piDaily" style="color:var(--green)">PKR 132</div></div>
+      <div class="ic-box" style="background:var(--card);border-radius:10px;padding:12px;"><div class="ic-bl">Total Duration</div><div class="ic-bv" id="piDays">365 Din</div></div>
+      <div class="ic-box" style="background:var(--card);border-radius:10px;padding:12px;"><div class="ic-bl">Total Return</div><div class="ic-bv" id="piTotal" style="color:var(--gbright)">PKR 48,180</div></div>
+      <div class="ic-box" style="background:var(--card);border-radius:10px;padding:12px;"><div class="ic-bl">Profit</div><div class="ic-bv" id="piProfit" style="color:var(--g1)">PKR 47,680</div></div>
+    </div>
+    <div class="info-box">💡 Invest karne ke liye pehle deposit karein.</div>
+    <button class="btn-G" onclick="goDeposit()">💰 Invest Karein</button>
+    <button class="btn-close" onclick="closeOverlay('mPlanInvest')">Baad Mein</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+</div>
+
+<script>
+const PLANS=[
+  {id:1,name:'Starter',deposit:500,daily:132,days:365,tag:'hot',icon:'🌱',badge:'Hot'},
+  {id:2,name:'Bronze',deposit:1000,daily:260,days:365,tag:'pop',icon:'🥉',badge:'Popular'},
+  {id:3,name:'Silver',deposit:1500,daily:390,days:365,tag:'',icon:'🥈',badge:''},
+  {id:4,name:'Gold',deposit:2000,daily:520,days:365,tag:'pop',icon:'🥇',badge:'Popular'},
+  {id:5,name:'Platinum',deposit:3000,daily:790,days:365,tag:'',icon:'💎',badge:''},
+  {id:6,name:'Diamond',deposit:4000,daily:1060,days:365,tag:'new',icon:'💠',badge:'New'},
+  {id:7,name:'Elite',deposit:5000,daily:1340,days:365,tag:'vip',icon:'⭐',badge:'VIP'},
+  {id:8,name:'Premium',deposit:10000,daily:2700,days:365,tag:'vip',icon:'🌟',badge:'VIP'},
+  {id:9,name:'Royal',deposit:15000,daily:4100,days:365,tag:'vip',icon:'👑',badge:'Royal'},
+  {id:10,name:'Mogul',deposit:20000,daily:5500,days:365,tag:'vip',icon:'💰',badge:'VIP'},
+  {id:11,name:'Tycoon',deposit:30000,daily:8300,days:365,tag:'vip',icon:'🏆',badge:'Elite'},
+  {id:12,name:'Legend',deposit:50000,daily:14000,days:365,tag:'vip',icon:'🎖️',badge:'Legend'},
+];
+function getUsers(){try{return JSON.parse(localStorage.getItem('gv_users')||'{}')}catch(e){return{}}}
+function saveUsers(u){localStorage.setItem('gv_users',JSON.stringify(u))}
+function getCurrent(){try{return JSON.parse(localStorage.getItem('gv_current')||'null')}catch(e){return null}}
+function saveCurrent(u){localStorage.setItem('gv_current',JSON.stringify(u))}
+function clearCurrent(){localStorage.removeItem('gv_current')}
+function getUserData(e){return getUsers()[e]||null}
+function saveUserData(e,d){const u=getUsers();u[e]=d;saveUsers(u)}
+function genId(){return 'GV-'+String(Object.keys(getUsers()).length+1).padStart(3,'0')}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
+function fmt(n){return Number(n||0).toLocaleString('en-PK',{maximumFractionDigits:0})}
+function switchTab(tab){const il=tab==='login';document.getElementById('loginForm').style.display=il?'block':'none';document.getElementById('regForm').style.display=il?'none':'block';document.getElementById('tabLogin').classList.toggle('on',il);document.getElementById('tabReg').classList.toggle('on',!il);document.getElementById('loginErr').style.display='none';document.getElementById('regErr').style.display='none';}
+function doLogin(){const email=document.getElementById('lEmail').value.trim().toLowerCase();const pass=document.getElementById('lPass').value;const err=document.getElementById('loginErr');if(!email||!pass){err.textContent='❌ Email aur password daalein';err.style.display='block';return;}const users=getUsers();if(!users[email]||users[email].password!==pass){err.textContent='❌ Email ya password ghalat hai';err.style.display='block';return;}err.style.display='none';saveCurrent({email});launchApp(email);}
+function doRegister(){const name=document.getElementById('rName').value.trim();const email=document.getElementById('rEmail').value.trim().toLowerCase();const phone=document.getElementById('rPhone').value.trim();const pass=document.getElementById('rPass').value;const refCode=document.getElementById('rRef').value.trim().toUpperCase();const err=document.getElementById('regErr');if(!name||!email||!phone||!pass){err.textContent='❌ Sab fields bharna zaroori hai';err.style.display='block';return;}if(pass.length<6){err.textContent='❌ Password 6 characters se zyada hona chahiye';err.style.display='block';return;}if(!/^\S+@\S+\.\S+$/.test(email)){err.textContent='❌ Sahi email likhein';err.style.display='block';return;}const users=getUsers();if(users[email]){err.textContent='❌ Yeh email already registered hai';err.style.display='block';return;}const id=genId();const now=new Date().toLocaleDateString('ur-PK');users[email]={name,email,phone,password:pass,id,since:now,balance:0,totalDeposit:0,totalEarned:0,totalWithdraw:0,plans:[],transactions:[],refCode:id.replace('-','')+(Math.random()*9999|0).toString().padStart(4,'0'),refCount:0,refBonus:0};if(refCode){Object.values(users).forEach(u=>{if(u.refCode===refCode){u.balance+=200;u.refBonus+=200;u.refCount++;users[email].balance+=100;}});}saveUsers(users);err.style.display='none';toast('✅ Account ban gaya! Login karein');switchTab('login');document.getElementById('lEmail').value=email;}
+function doLogout(){clearCurrent();closeOverlay('mProfile');document.getElementById('app').style.display='none';document.getElementById('authScreen').style.display='flex';}
+function launchApp(email){document.getElementById('authScreen').style.display='none';document.getElementById('app').style.display='flex';renderApp(email);}
+function renderApp(email){const u=getUserData(email);if(!u)return;document.getElementById('hdrAva').textContent=u.name.charAt(0).toUpperCase();document.getElementById('heroBalance').textContent='PKR '+fmt(u.balance);document.getElementById('heroEarnings').textContent='Total Kamai: PKR '+fmt(u.totalEarned);document.getElementById('heroId').textContent=u.id;document.getElementById('statDeposit').textContent=u.transactions.filter(t=>t.type==='deposit').length;document.getElementById('statPlans').textContent=u.plans.filter(p=>p.active).length;document.getElementById('statWithdraw').textContent=u.transactions.filter(t=>t.type==='withdraw').length;document.getElementById('proAvaBig').textContent=u.name.charAt(0).toUpperCase();document.getElementById('proName').textContent=u.name;document.getElementById('proEmail').textContent=u.email;document.getElementById('proId').textContent=u.id;document.getElementById('proPhone').textContent=u.phone;document.getElementById('proDeposit').textContent='PKR '+fmt(u.totalDeposit);document.getElementById('proEarned').textContent='PKR '+fmt(u.totalEarned);document.getElementById('proPlans').textContent=u.plans.filter(p=>p.active).length;document.getElementById('proSince').textContent=u.since;document.getElementById('refCode').textContent=u.refCode||u.id;document.getElementById('refCount').textContent=u.refCount+' log';document.getElementById('refBonus').textContent='PKR '+fmt(u.refBonus||0);renderPlans();renderMyInv(u);renderHistory(u);renderDepositPlanSelect();}
+function renderPlans(){const c=document.getElementById('plansContainer');c.innerHTML='';PLANS.forEach(p=>{const total=p.daily*p.days;const tagHtml=p.tag?`<span class="plan-tag tag-${p.tag}">${p.badge}</span>`:'';c.innerHTML+=`<div class="plan-card" onclick="openPlanModal(${p.id})"><div class="plan-top"><div class="plan-icon" style="background:var(--card2);">${p.icon}</div><div class="plan-info"><div class="plan-name">${p.name} Plan</div><div class="plan-desc">PKR ${fmt(p.deposit)} — Rozana Income</div></div>${tagHtml}</div><div class="plan-stats"><div class="ps-col"><div class="ps-lbl">Invest</div><div class="ps-val bright">₨${fmt(p.deposit)}</div></div><div class="ps-col"><div class="ps-lbl">Daily</div><div class="ps-val green">₨${fmt(p.daily)}</div></div><div class="ps-col"><div class="ps-lbl">Din</div><div class="ps-val">365</div></div><div class="ps-col"><div class="ps-lbl">Total</div><div class="ps-val bright">₨${fmt(total)}</div></div></div><div class="plan-btn-wrap"><button class="plan-btn">💰 Invest Karein</button></div></div>`;});}
+function renderMyInv(u){const c=document.getElementById('myInvContainer');const active=u.plans.filter(p=>p.active);if(!active.length){c.innerHTML='<div class="inv-empty">📋 Abhi koi active plan nahi<br><small>Plan khareedein aur kamai shuru karein</small></div>';return;}c.innerHTML='';active.forEach(p=>{const plan=PLANS.find(pl=>pl.id===p.planId);if(!plan)return;const daysPassed=Math.min(Math.floor((Date.now()-p.startDate)/86400000),plan.days);const earned=daysPassed*plan.daily;const pct=Math.round(daysPassed/plan.days*100);c.innerHTML+=`<div class="inv-card"><div class="ic-top"><span class="ic-name">${plan.icon} ${plan.name} Plan</span><span class="ic-badge">Active ✓</span></div><div class="ic-grid"><div class="ic-box"><div class="ic-bl">Invested</div><div class="ic-bv">₨${fmt(plan.deposit)}</div></div><div class="ic-box"><div class="ic-bl">Daily</div><div class="ic-bv" style="color:var(--green)">₨${fmt(plan.daily)}</div></div><div class="ic-box"><div class="ic-bl">Earned</div><div class="ic-bv" style="color:var(--gbright)">₨${fmt(earned)}</div></div><div class="ic-box"><div class="ic-bl">Din Baqe</div><div class="ic-bv">${plan.days-daysPassed}</div></div><div class="ic-box"><div class="ic-bl">Total</div><div class="ic-bv">₨${fmt(plan.daily*plan.days)}</div></div><div class="ic-box"><div class="ic-bl">Progress</div><div class="ic-bv">${pct}%</div></div></div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div></div>`;});}
+function renderHistory(u){const c=document.getElementById('historyContainer');if(!u.transactions.length){c.innerHTML='<div class="inv-empty">📋 Koi transaction nahi</div>';return;}c.innerHTML='';[...u.transactions].reverse().forEach(t=>{const color=t.type==='deposit'?'var(--green)':'var(--red)';const sign=t.type==='deposit'?'+':'-';const icon=t.type==='deposit'?'📥':'📤';c.innerHTML+=`<div class="pro-stat" style="border-radius:10px;border:1px solid #1a1400;margin-bottom:8px;flex-direction:column;align-items:flex-start;gap:4px;"><div style="display:flex;justify-content:space-between;width:100%;"><span style="color:var(--txt2)">${icon} ${t.desc||t.type}</span><span style="color:${color};font-weight:800;">${sign}₨${fmt(t.amount)}</span></div><small style="color:var(--txt3);font-size:10px;">${t.date} • TxID: ${t.txid||'N/A'} • ${t.status||'Pending'}</small></div>`;});}
+let selectedPlanForDeposit=null;let depositTimer=null;let depositTimerSecs=3600;
+function renderDepositPlanSelect(){const sel=document.getElementById('depositPlanSel');sel.innerHTML='<option value="">-- Plan Chunein --</option>';PLANS.forEach(p=>{sel.innerHTML+=`<option value="${p.id}">${p.icon} ${p.name} — PKR ${fmt(p.deposit)} | Daily: PKR ${fmt(p.daily)}</option>`;});}
+function updateDepositAmount(){const sel=document.getElementById('depositPlanSel');const id=parseInt(sel.value);const box=document.getElementById('depositAmountBox');const btn=document.getElementById('btnProceedDeposit');if(!id){box.style.display='none';btn.disabled=true;selectedPlanForDeposit=null;return;}const p=PLANS.find(pl=>pl.id===id);selectedPlanForDeposit=p;document.getElementById('depositAmt').textContent='PKR '+fmt(p.deposit);document.getElementById('depositReturn').textContent=`Daily: PKR ${fmt(p.daily)} | 365 Din | Total: PKR ${fmt(p.daily*p.days)}`;box.style.display='block';btn.disabled=false;}
+function proceedDeposit(){if(!selectedPlanForDeposit){toast('⚠️ Pehle plan select karein');return;}document.getElementById('depositStep1').style.display='none';document.getElementById('depositStep2').style.display='block';document.getElementById('confirmAmt').textContent='PKR '+fmt(selectedPlanForDeposit.deposit);startDepositTimer();}
+function startDepositTimer(){depositTimerSecs=3600;clearInterval(depositTimer);depositTimer=setInterval(()=>{depositTimerSecs--;const h=Math.floor(depositTimerSecs/3600);const m=Math.floor((depositTimerSecs%3600)/60);const s=depositTimerSecs%60;document.getElementById('timerDisplay').textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');if(depositTimerSecs<=0)clearInterval(depositTimer);},1000);}
+function submitDeposit(){const txid=document.getElementById('txidInput').value.trim();if(!txid){toast('⚠️ Transaction ID zaroor likhein');return;}if(!selectedPlanForDeposit){toast('⚠️ Plan select karein');return;}clearInterval(depositTimer);const email=getCurrent()?.email;if(!email)return;const u=getUserData(email);const now=new Date().toLocaleDateString('ur-PK');u.transactions.push({type:'deposit',planId:selectedPlanForDeposit.id,amount:selectedPlanForDeposit.deposit,txid,date:now,status:'Pending — Verify Ho Raha Hai',desc:`${selectedPlanForDeposit.name} Plan Deposit`});u.plans.push({planId:selectedPlanForDeposit.id,startDate:Date.now(),active:true,txid});u.totalDeposit+=selectedPlanForDeposit.deposit;saveUserData(email,u);document.getElementById('depositStep2').style.display='none';document.getElementById('depositStep3').style.display='block';renderApp(email);}
+function resetDepositForm(){document.getElementById('depositStep1').style.display='block';document.getElementById('depositStep2').style.display='none';document.getElementById('depositStep3').style.display='none';document.getElementById('depositPlanSel').value='';document.getElementById('depositAmountBox').style.display='none';document.getElementById('txidInput').value='';document.getElementById('btnProceedDeposit').disabled=true;selectedPlanForDeposit=null;clearInterval(depositTimer);selMethod(1);}
+function selMethod(n){[1,2,3].forEach(i=>{document.getElementById('mc'+i).classList.toggle('sel',i===n);const ch=document.querySelector('#mc'+i+' .mc-check');if(ch)ch.textContent=i===n?'✓':'';});document.getElementById('jcDetail').style.display=n===1?'block':'none';document.getElementById('epDetail').style.display=n===2?'block':'none';document.getElementById('bankDetail').style.display=n===3?'block':'none';}
+function submitWithdraw(){const email=getCurrent()?.email;if(!email)return;const u=getUserData(email);const amount=parseInt(document.getElementById('wdAmount').value)||0;const account=document.getElementById('wdAccount').value.trim();const name=document.getElementById('wdName').value.trim();if(amount<500){toast('⚠️ Minimum withdraw PKR 500 hai');return;}if(!account||!name){toast('⚠️ Account details bharen');return;}if(u.balance<amount){toast('⚠️ Balance kam hai');return;}u.balance-=amount;u.totalWithdraw=(u.totalWithdraw||0)+amount;u.transactions.push({type:'withdraw',amount,account,accountName:name,date:new Date().toLocaleDateString('ur-PK'),status:'Processing — 24-48 ghante',desc:'Withdrawal Request'});saveUserData(email,u);closeOverlay('mWithdraw');toast('✅ Withdraw request submit ho gayi!');renderApp(email);}
+function openPlanModal(id){const p=PLANS.find(pl=>pl.id===id);if(!p)return;document.getElementById('piTitle').textContent=p.icon+' '+p.name+' Plan';document.getElementById('piAmount').textContent='PKR '+fmt(p.deposit);document.getElementById('piReturn').textContent='Daily: PKR '+fmt(p.daily)+' | 365 Din';document.getElementById('piDaily').textContent='PKR '+fmt(p.daily);document.getElementById('piDays').textContent='365 Din';document.getElementById('piTotal').textContent='PKR '+fmt(p.daily*p.days);document.getElementById('piProfit').textContent='PKR '+fmt(p.daily*p.days-p.deposit);selectedPlanForDeposit=p;openOverlay('mPlanInvest');}
+function goDeposit(){closeOverlay('mPlanInvest');openOverlay('mDeposit');setTimeout(()=>{if(selectedPlanForDeposit){document.getElementById('depositPlanSel').value=selectedPlanForDeposit.id;updateDepositAmount();}},100);}
+function copyRefCode(){copyText(document.getElementById('refCode').textContent);}
+function shareWhatsApp(){const code=document.getElementById('refCode').textContent;window.open('https://wa.me/?text='+encodeURIComponent('GoldVault Investment Platform par join karein!\nMera referral code: '+code),'_blank');}
+function copyText(txt){if(navigator.clipboard){navigator.clipboard.writeText(txt).then(()=>toast('✅ Copied: '+txt));}else{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('✅ Copied: '+txt);}}
+function openOverlay(id){document.getElementById(id).classList.add('open');}
+function closeOverlay(id){document.getElementById(id).classList.remove('open');}
+function goPage(id){document.querySelectorAll('.page-sec').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function setNav(n){for(let i=0;i<5;i++)document.getElementById('bni'+i).classList.toggle('on',i===n);}
+document.querySelectorAll('.overlay').forEach(ov=>{ov.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});});
+window.addEventListener('DOMContentLoaded',()=>{const cur=getCurrent();if(cur&&cur.email&&getUserData(cur.email)){document.getElementById('authScreen').style.display='none';document.getElementById('app').style.display='flex';renderApp(cur.email);}});
+setInterval(()=>{const cur=getCurrent();if(!cur)return;const u=getUserData(cur.email);if(!u)return;let earned=0;u.plans.filter(p=>p.active).forEach(p=>{const plan=PLANS.find(pl=>pl.id===p.planId);if(plan)earned+=plan.daily/1440;});if(earned>0){u.balance+=earned;u.totalEarned+=earned;saveUserData(cur.email,u);renderApp(cur.email);}},60000);
+</script>
+</body>
+</html>
